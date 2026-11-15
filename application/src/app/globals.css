@@ -428,6 +428,11 @@ h2 {
   cursor: pointer;
 }
 
+.shop-list button s {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .shop-list button:disabled {
   border-color: var(--line);
   color: var(--muted);

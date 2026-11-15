@@ -26,7 +26,7 @@ export const ENEMIES = {
   skull: { sprite: "skull", hp: 700, speed: 40, dmg: 25, radius: 18, xp: 40, from: Infinity, weight: 0, boss: true },
 };
 
-export const BOSS_EVERY = 120;
+export const BOSS_EVERY = 60;
 export const MAX_ENEMIES = 320;
 
 /** Seconds of run -> enemy health and speed multipliers, and spawns per second. Space Waves-style ramp. */

@@ -13,16 +13,18 @@ export const UPGRADES = {
 
 export function defaultSave(now = Date.now()) {
   const upgrades = Object.fromEntries(Object.keys(UPGRADES).map((id) => [id, 0]));
-  return { gold: 0, best: 0, runs: 0, upgrades, lastSeen: now };
+  return { gold: 0, best: 0, runs: 0, freeBuys: 0, upgrades, lastSeen: now };
 }
 
 export const costOf = (id, level) => Math.floor(UPGRADES[id].base * 1.15 ** level);
 
-/** Buys one level of an upgrade. Returns the new save, or null when the gold isn't there. */
+/** Buys one level of an upgrade, spending a free ticket (from a boss kill) before gold. Returns the new save, or null when neither is there. */
 export function buy(save, id) {
+  const upgrades = { ...save.upgrades, [id]: save.upgrades[id] + 1 };
+  if (save.freeBuys > 0) return { ...save, freeBuys: save.freeBuys - 1, upgrades };
   const cost = costOf(id, save.upgrades[id]);
   if (save.gold < cost) return null;
-  return { ...save, gold: save.gold - cost, upgrades: { ...save.upgrades, [id]: save.upgrades[id] + 1 } };
+  return { ...save, gold: save.gold - cost, upgrades };
 }
 
 /** Gold the forge made since lastSeen, capped at eight hours. */

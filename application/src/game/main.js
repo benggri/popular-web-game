@@ -52,6 +52,11 @@ function toTitle() {
 function startRun() {
   // the title is server-rendered and clickable before the sprites are baked
   if (!S) return;
+  // boss tickets are only good until the next run: unused ones burn out here
+  if (save.freeBuys) {
+    save = { ...save, freeBuys: 0 };
+    storeSave(storage, save);
+  }
   run = createRun(save);
   fx.clear();
   ui.resetHud();
@@ -116,7 +121,14 @@ function setPaused(on) {
 function endRun() {
   const gold = runGold(run.coins + Math.floor(run.t / 10), save.upgrades);
   const isBest = run.t > save.best;
-  save = { ...save, gold: save.gold + gold, best: Math.max(save.best, run.t), runs: save.runs + 1, lastSeen: Date.now() };
+  save = {
+    ...save,
+    gold: save.gold + gold,
+    best: Math.max(save.best, run.t),
+    runs: save.runs + 1,
+    freeBuys: run.bossKills,
+    lastSeen: Date.now(),
+  };
   storeSave(storage, save);
   ui.renderOver(run, gold, isBest);
   ui.setHud(false);

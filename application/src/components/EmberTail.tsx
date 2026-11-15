@@ -93,6 +93,7 @@ export default function EmberTail() {
           <p className="gold big">
             골드 <b id="shop-gold">0</b>
           </p>
+          <p id="shop-free" className="toast" hidden />
           <ul id="shop-list" className="shop-list" />
           <button id="close-shop" className="btn">
             돌아가기
@@ -126,6 +127,7 @@ export default function EmberTail() {
           <p id="new-best" className="toast" hidden>
             새 최고 기록!
           </p>
+          <p id="r-free" className="toast" hidden />
           <dl className="result">
             <dt>버틴 시간</dt>
             <dd id="r-time">0:00</dd>

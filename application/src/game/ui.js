@@ -88,11 +88,15 @@ export function renderTitle(save, offline) {
 }
 
 export function renderShop(save, onBuy) {
+  const free = save.freeBuys > 0;
   $("shop-gold").textContent = save.gold;
+  $("shop-free").hidden = !free;
+  if (free) $("shop-free").textContent = `보스 처치 보상 · 무료 구매권 ${save.freeBuys}장 (다음 판을 시작하면 사라져요!)`;
   $("shop-list").innerHTML = Object.entries(UPGRADES)
     .map(([id, u]) => {
       const lv = save.upgrades[id], cost = costOf(id, lv);
-      return `<li><div><b>${u.name}</b><span class="lv">Lv ${lv}</span><p>${u.desc}</p></div><button data-id="${id}" ${save.gold < cost ? "disabled" : ""}>● ${cost}</button></li>`;
+      const label = free ? `무료 <s>${cost}</s>` : `● ${cost}`;
+      return `<li><div><b>${u.name}</b><span class="lv">Lv ${lv}</span><p>${u.desc}</p></div><button data-id="${id}" ${!free && save.gold < cost ? "disabled" : ""}>${label}</button></li>`;
     })
     .join("");
   for (const b of $("shop-list").querySelectorAll("button")) b.addEventListener("click", () => onBuy(b.dataset.id));
@@ -104,6 +108,8 @@ export function renderOver(run, gold, isBest) {
   $("r-level").textContent = run.level;
   $("r-gold").textContent = `+${gold}`;
   $("new-best").hidden = !isBest;
+  $("r-free").hidden = !run.bossKills;
+  if (run.bossKills) $("r-free").textContent = `보스 ${run.bossKills}마리 처치! 대장간 무료 구매권 ${run.bossKills}장 · 다음 판 전에 쓰세요`;
 }
 
 export const el = $;

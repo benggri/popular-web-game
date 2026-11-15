@@ -55,6 +55,22 @@ describe("progress", () => {
     expect(buy(next, "might")).toBeNull();
   });
 
+  it("spends a boss ticket before gold", () => {
+    const s = { ...defaultSave(0), gold: 0, freeBuys: 2 };
+    const once = buy(s, "forge");
+    expect(once.upgrades.forge).toBe(1);
+    expect(once.freeBuys).toBe(1);
+    expect(once.gold).toBe(0);
+    const twice = buy(once, "might");
+    expect(twice.freeBuys).toBe(0);
+    expect(buy(twice, "might")).toBeNull();
+  });
+
+  it("old saves load with no free tickets", () => {
+    const storage = { getItem: () => JSON.stringify({ gold: 5, upgrades: {} }) };
+    expect(loadSave(storage).freeBuys).toBe(0);
+  });
+
   it("forge earns while away, capped at eight hours", () => {
     const s = defaultSave(0);
     s.upgrades.forge = 2;
