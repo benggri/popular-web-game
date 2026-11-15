@@ -35,6 +35,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className={galmuri.variable}>
+      <head>
+        {/* Google AdSense: a plain tag, since next/script's data-nscript attribute trips AdSense's head check */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9245086971599023"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body>
         {children}
         <SpeedInsights />
