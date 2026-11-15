@@ -32,7 +32,8 @@
 - **패시브 4종**: 긴 꼬리, 순풍, 자석, 장작
 - **적 5종**: 슬라임 → 박쥐(25초) → 유령(60초) → 눈알(120초), 1분마다 보스 해골 (처치하면 불씨 대장간 무료 구매권 1장, 다음 판을 시작하면 소멸)
 - **영구 강화 5종**: 위력, 활력, 신속, 탐욕, 불씨 대장간(오프라인 골드, 최대 8시간)
-- 진행 상황은 브라우저 localStorage에 저장됩니다 (DB 없음)
+- 진행 상황은 브라우저 localStorage에 저장됩니다 (DB 없음, 언어와 상관없이 공유)
+- **4개 언어**: 한국어 `/`, English `/en`, 日本語 `/ja`, 中文(简体) `/zh` — 타이틀 화면에서 전환, 언어별 메타데이터·hreflang·사이트맵
 
 ## 개발
 
@@ -40,7 +41,7 @@
 cd application
 npm install
 npm run dev      # http://localhost:3000
-npm test         # 합성 규칙·강화 가격·오프라인 골드 단위 테스트
+npm test         # 합성 규칙·강화 가격·오프라인 골드·번역 키 단위 테스트
 npm run build
 ```
 
@@ -48,8 +49,11 @@ npm run build
 
 ```
 application/src
-├── app/              Next.js 레이아웃·페이지·전역 CSS·Galmuri 폰트
+├── app/              Next.js 전역 CSS·Galmuri 폰트·robots·sitemap
+│   └── [[...lang]]/  언어별 레이아웃·페이지 (없음=한국어, en·ja·zh)
 ├── components/       EmberTail.tsx: 게임 마크업 + 클라이언트에서 게임 부팅
+├── i18n/             언어별 문구 사전(ko·en·ja·zh)과 현재 언어 선택
+├── lib/site.ts       사이트 URL·언어 경로·hreflang
 └── game/
     ├── main.js       화면 흐름(타이틀→플레이→레벨업/일시정지→게임오버)과 메인 루프
     ├── sprites.js    pixelfx 루프 이펙트를 시작 시 캔버스 프레임으로 굽기

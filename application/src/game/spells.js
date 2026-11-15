@@ -124,14 +124,5 @@ function updateDelayed(run, dt, fx) {
   run.delayed = run.delayed.filter((d) => d.t > 0);
 }
 
-/** One line per spell for the level-up cards: what the next tier does. */
-export function describeTier(id, tier) {
-  const s = stats(id, power(tier));
-  switch (id) {
-    case "bolt": return `${s.count}발 · 피해 ${s.dmg}${s.pierce ? ` · 관통 ${s.pierce}` : ""}`;
-    case "nova": return `피해 ${s.dmg} · 반경 ${s.radius} · 감속`;
-    case "chain": return `${s.jumps}회 연쇄 · 피해 ${s.dmg}`;
-    case "orb": return `구슬 ${s.count}개 · 피해 ${s.dmg}`;
-    case "meteor": return `바위 ${s.count}개 · 피해 ${s.dmg}`;
-  }
-}
+/** A spell's numbers at a tier, for the level-up cards to describe. */
+export const tierStats = (id, tier) => stats(id, power(tier));

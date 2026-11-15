@@ -3,15 +3,18 @@
 // The game's static markup. The canvas game (src/game) takes over these elements by id once mounted.
 
 import { useEffect } from "react";
+import { LANGS, dict, pathOf } from "@/i18n/index.js";
 
-export default function EmberTail() {
+export default function EmberTail({ lang }: { lang: string }) {
   useEffect(() => {
-    import("@/game/main.js").then((m) => m.startGame());
-  }, []);
+    import("@/game/main.js").then((m) => m.startGame(lang));
+  }, [lang]);
+
+  const t = dict(lang).page;
 
   return (
     <main id="stage">
-      <canvas id="game" aria-label="게임 화면" />
+      <canvas id="game" aria-label={t.canvas} />
 
       <div id="hud" hidden>
         <div className="hud-top">
@@ -33,121 +36,118 @@ export default function EmberTail() {
         </div>
         <div id="tiles" className="tiles" />
         <p id="alert" className="alert" role="status" hidden />
-        <button id="dash" className="dash" aria-label="대시">
-          <span>대시</span>
+        <button id="dash" className="dash" aria-label={t.dash}>
+          <span>{t.dash}</span>
         </button>
-        <button id="pause-btn" className="icon-btn" aria-label="일시정지">
+        <button id="pause-btn" className="icon-btn" aria-label={t.pause}>
           II
         </button>
       </div>
 
       <section id="title" className="screen">
         <div className="panel title-panel">
-          <h1 className="logo" aria-label="Ember Tail 엠버 테일">
+          <nav className="langs" aria-label="Language">
+            {LANGS.map((code) => (
+              // a full page load: the game boots once per page, in that page's language
+              <a key={code} href={pathOf(code)} hrefLang={dict(code).htmlLang} aria-current={code === lang ? "page" : undefined}>
+                {dict(code).label}
+              </a>
+            ))}
+          </nav>
+          <h1 className="logo" aria-label={t.logo}>
             EMBER
             <br />
             TAIL
           </h1>
-          <p className="tagline">유령불이 되어 밤을 버티는 픽셀 서바이버</p>
+          <p className="tagline">{t.tagline}</p>
           <div className="stats-row">
             <span>
-              최고 <b id="best">0:00</b>
+              {t.best} <b id="best">0:00</b>
             </span>
             <span className="gold">
-              골드 <b id="gold">0</b>
+              {t.gold} <b id="gold">0</b>
             </span>
           </div>
           <p id="offline" className="toast" hidden />
           <button id="play" className="btn primary">
-            시작하기
+            {t.play}
           </button>
           <button id="open-shop" className="btn">
-            불씨 대장간
+            {t.shop}
           </button>
           <ul className="howto">
-            <li>
-              <b>이동</b> 마우스/터치를 따라가요 · WASD도 OK
-            </li>
-            <li>
-              <b>대시</b> 스페이스 · 우클릭 · 대시 버튼 (무적)
-            </li>
-            <li>
-              <b>합성</b> 같은 주문 카드 = 2 → 4 → 8 … 64
-            </li>
-            <li>
-              <b>꼬리</b> 꼬리에 닿은 적은 불탑니다
-            </li>
+            {t.howto.map(([k, v]: string[]) => (
+              <li key={k}>
+                <b>{k}</b> {v}
+              </li>
+            ))}
           </ul>
-          <p className="about">
-            설치 없이 브라우저에서 바로 하는 무료 픽셀 아트 서바이버 게임입니다. 자동으로 발사되는 주문으로 슬라임·박쥐·유령·보스
-            해골을 물리치고, 같은 주문을 합쳐 2048처럼 강화하세요. 모은 골드로 영구 강화를 하면 다음 판은 더 오래 버틸 수
-            있어요. PC와 모바일 모두 지원합니다.
-          </p>
+          <p className="about">{t.about}</p>
         </div>
       </section>
 
       <section id="shop" className="screen" hidden>
         <div className="panel">
-          <h2>불씨 대장간</h2>
-          <p className="sub">판에서 모은 골드로 영구 강화 · 가격은 레벨마다 15%씩 올라요</p>
+          <h2>{t.shop}</h2>
+          <p className="sub">{t.shopSub}</p>
           <p className="gold big">
-            골드 <b id="shop-gold">0</b>
+            {t.gold} <b id="shop-gold">0</b>
           </p>
           <p id="shop-free" className="toast" hidden />
           <ul id="shop-list" className="shop-list" />
           <button id="close-shop" className="btn">
-            돌아가기
+            {t.back}
           </button>
         </div>
       </section>
 
       <section id="levelup" className="screen dim" hidden>
         <div className="panel wide">
-          <h2 id="levelup-title">레벨 업!</h2>
-          <p className="sub">카드를 고르세요 · 1 2 3</p>
+          <h2 id="levelup-title">{t.levelUp}</h2>
+          <p className="sub">{t.pickHint}</p>
           <div id="cards" className="cards" />
         </div>
       </section>
 
       <section id="paused" className="screen dim" hidden>
         <div className="panel">
-          <h2>일시정지</h2>
+          <h2>{t.paused}</h2>
           <button id="resume" className="btn primary">
-            계속하기
+            {t.resume}
           </button>
           <button id="quit" className="btn">
-            포기하고 나가기
+            {t.quit}
           </button>
         </div>
       </section>
 
       <section id="over" className="screen dim" hidden>
         <div className="panel">
-          <h2>불씨가 꺼졌습니다</h2>
+          <h2>{t.over}</h2>
           <p id="new-best" className="toast" hidden>
-            새 최고 기록!
+            {t.newBest}
           </p>
           <p id="r-free" className="toast" hidden />
           <dl className="result">
-            <dt>버틴 시간</dt>
+            <dt>{t.time}</dt>
             <dd id="r-time">0:00</dd>
-            <dt>처치</dt>
+            <dt>{t.kills}</dt>
             <dd id="r-kills">0</dd>
-            <dt>레벨</dt>
+            <dt>{t.level}</dt>
             <dd id="r-level">1</dd>
-            <dt>획득 골드</dt>
+            <dt>{t.earned}</dt>
             <dd id="r-gold" className="gold">
               0
             </dd>
           </dl>
           <button id="retry" className="btn primary">
-            다시 하기 <small>R</small>
+            {t.retry} <small>R</small>
           </button>
           <button id="over-shop" className="btn">
-            불씨 대장간
+            {t.shop}
           </button>
           <button id="over-title" className="btn ghost">
-            타이틀로
+            {t.toTitle}
           </button>
         </div>
       </section>

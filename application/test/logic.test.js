@@ -2,6 +2,10 @@ import { describe, it, expect } from "vitest";
 import { createLoadout, offerCards, applyCard, power, MAX_TIER } from "../src/game/runes.js";
 import { defaultSave, buy, costOf, offlineGold, settleOffline, runGold, loadSave, storeSave } from "../src/game/progress.js";
 import { createRun, mergeFarGems } from "../src/game/world.js";
+import { SPELLS, PASSIVES } from "../src/game/runes.js";
+import { UPGRADES } from "../src/game/progress.js";
+import { tierStats } from "../src/game/spells.js";
+import { DICTS, LANGS, dict, pathOf, setLang, tr } from "../src/i18n/index.js";
 
 const seq = (...xs) => {
   let i = 0;
@@ -121,5 +125,35 @@ describe("world", () => {
     run.pickups = Array.from({ length: 401 }, () => ({ kind: "coin", x: 50, y: 0, value: 1, t: 0 }));
     expect(() => mergeFarGems(run)).not.toThrow();
     expect(run.pickups).toHaveLength(401);
+  });
+});
+
+describe("i18n", () => {
+  /** Every key path in a dictionary, with functions and arrays as leaves. */
+  const shape = (o, at = "") =>
+    Object.entries(o).flatMap(([k, v]) => (v && typeof v === "object" && !Array.isArray(v) ? shape(v, `${at}${k}.`) : [`${at}${k}`]));
+
+  it("gives every language the same keys as Korean", () => {
+    const ko = shape(DICTS.ko).sort();
+    for (const lang of LANGS) expect(shape(DICTS[lang]).sort(), lang).toEqual(ko);
+  });
+
+  it("names every spell, passive and upgrade the game has, in every language", () => {
+    for (const lang of LANGS) {
+      const g = DICTS[lang].game;
+      for (const id of SPELLS) expect(g.tier[id](tierStats(id, 8)), `${lang} ${id}`).toMatch(/\d/);
+      expect(Object.keys(g.spells).sort()).toEqual([...SPELLS].sort());
+      expect(Object.keys(g.passives).sort()).toEqual([...PASSIVES].sort());
+      expect(Object.keys(g.upgrades).sort()).toEqual(Object.keys(UPGRADES).sort());
+    }
+  });
+
+  it("puts Korean at the root and falls back to it for unknown codes", () => {
+    expect(pathOf("ko")).toBe("/");
+    expect(pathOf("ja")).toBe("/ja");
+    expect(dict("fr")).toBe(DICTS.ko);
+    setLang("en");
+    expect(tr().bossAppears).toBe(DICTS.en.game.bossAppears);
+    setLang("ko");
   });
 });

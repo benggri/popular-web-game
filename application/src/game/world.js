@@ -109,7 +109,7 @@ function killEnemy(run, fx, e) {
     run.pickups.push({ kind: "heart", x: e.x, y: e.y + 12, value: 40, t: 0 });
     run.shake = 0.5;
     run.bossKills++;
-    run.alert = { text: "보스 처치! 대장간 무료 구매권 +1", t: 2.5 };
+    run.alert = { key: "bossDown", t: 2.5 };
     return;
   }
   if (Math.random() < DROPS.coin) run.pickups.push({ kind: "coin", x: e.x + 4, y: e.y, value: 1 + ((Math.random() * 3) | 0), t: 0 });

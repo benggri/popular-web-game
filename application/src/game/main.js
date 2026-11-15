@@ -11,6 +11,7 @@ import { drawWorld, drawOverlay, makeFloor } from "./render.js";
 import { offerCards, applyCard } from "./runes.js";
 import { loadSave, storeSave, buy, settleOffline, runGold } from "./progress.js";
 import * as ui from "./ui.js";
+import { setLang } from "../i18n/index.js";
 
 const canvas = ui.el("game");
 const ctx = canvas.getContext("2d");
@@ -246,10 +247,11 @@ function wire() {
 
 let started = false;
 
-/** Boots the game into the page's markup. Safe to call more than once (React may mount twice in dev). */
-export async function startGame() {
+/** Boots the game into the page's markup, speaking `lang`. Safe to call more than once (React may mount twice in dev). */
+export async function startGame(lang) {
   if (started) return;
   started = true;
+  setLang(lang);
   resize();
   wire();
   requestAnimationFrame(tick);

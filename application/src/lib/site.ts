@@ -1,20 +1,21 @@
 // Facts about the site that metadata, robots, the sitemap and structured data all share.
 
+import { LANGS, DEFAULT_LANG, dict, pathOf } from "@/i18n/index.js";
+
 export const SITE_URL = "https://popular-web-game.vercel.app";
 export const SITE_NAME = "Ember Tail";
-export const SITE_TITLE = "Ember Tail 엠버 테일 — 무료 픽셀 서바이버 웹게임";
-export const SITE_DESCRIPTION =
-  "설치 없이 브라우저에서 바로 하는 무료 픽셀 아트 서바이버 게임. 유령불이 되어 몰려오는 괴물을 자동 주문으로 물리치고, 같은 주문을 2048처럼 합쳐 강화하세요. PC·모바일 지원.";
-export const SITE_KEYWORDS = [
-  "무료 게임",
-  "웹게임",
-  "브라우저 게임",
-  "서바이버 게임",
-  "뱀서라이크",
-  "픽셀 게임",
-  "2048",
-  "슬리더",
-  "모바일 웹게임",
-  "Ember Tail",
-  "엠버 테일",
-];
+
+/** The language a route's optional `[[...lang]]` segment names: none is Korean, anything else unknown is null. */
+export function langOf(segments: string[] | undefined): string | null {
+  if (!segments?.length) return DEFAULT_LANG;
+  const [code] = segments;
+  return segments.length === 1 && code !== DEFAULT_LANG && LANGS.includes(code) ? code : null;
+}
+
+/** hreflang -> path for every language, plus x-default for everyone else. */
+export function languageAlternates(): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const lang of LANGS) out[dict(lang).htmlLang] = pathOf(lang);
+  out["x-default"] = pathOf("en");
+  return out;
+}

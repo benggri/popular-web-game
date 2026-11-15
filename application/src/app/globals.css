@@ -263,6 +263,30 @@ body {
   background: rgba(27, 22, 38, 0.86);
 }
 
+.langs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 11px;
+}
+
+.langs a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 2px 4px;
+}
+
+.langs a:hover,
+.langs a:focus-visible {
+  color: var(--text);
+}
+
+.langs a[aria-current="page"] {
+  color: var(--ember-hi);
+  border-bottom: 2px solid var(--ember-hi);
+}
+
 h1,
 h2 {
   margin: 0;

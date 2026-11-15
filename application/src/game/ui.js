@@ -1,9 +1,9 @@
 // The DOM around the canvas: screens, the HUD, level-up cards and the forge shop.
 
 import { TILE, PLAYER } from "./config.js";
-import { SPELLS, PASSIVES } from "./runes.js";
 import { UPGRADES, costOf } from "./progress.js";
-import { describeTier } from "./spells.js";
+import { tierStats } from "./spells.js";
+import { tr } from "../i18n/index.js";
 
 const $ = (id) => document.getElementById(id);
 const SCREENS = ["title", "shop", "levelup", "paused", "over"];
@@ -38,7 +38,7 @@ export function updateHud(run) {
   $("kills").textContent = run.kills;
   $("coins").textContent = run.coins;
   $("alert").hidden = !run.alert;
-  if (run.alert) $("alert").textContent = run.alert.text;
+  if (run.alert) $("alert").textContent = tr()[run.alert.key];
   $("dash").style.setProperty("--ready", String(1 - p.dashCd / PLAYER.dashCooldown));
   const sig = JSON.stringify(run.loadout.spells);
   if (sig !== lastTiles) renderTiles(run, lastTiles ? JSON.parse(lastTiles) : {});
@@ -50,7 +50,7 @@ function renderTiles(run, before) {
     .map(([id, tier]) => {
       const [bg, fg] = TILE[tier];
       const pop = before[id] !== tier ? "pop" : "";
-      return `<span class="tile ${pop}" style="background:${bg};color:${fg}">${tier}<small>${SPELLS[id].name}</small></span>`;
+      return `<span class="tile ${pop}" style="background:${bg};color:${fg}">${tier}<small>${tr().spells[id].name}</small></span>`;
     })
     .join("");
 }
@@ -62,14 +62,15 @@ export function resetHud() {
 // ---- level-up cards
 
 export function showCards(run, cards, onPick) {
-  $("levelup-title").textContent = `레벨 ${run.level - run.pendingLevels + 1}!`;
+  const T = tr();
+  $("levelup-title").textContent = T.levelTitle(run.level - run.pendingLevels + 1);
   $("cards").innerHTML = cards
     .map((c, i) => {
       if (c.kind === "spell") {
-        const s = SPELLS[c.id], merge = c.from ? `<span class="merge">${c.from} + ${c.from} = ${c.to}</span>` : `<span class="merge">새 주문</span>`;
-        return `<button class="card" data-i="${i}">${tileHtml(c.to)}<span><span class="key">${i + 1}</span> <b>${s.name}</b></span><p>${s.desc}<br />${describeTier(c.id, c.to)}</p>${merge}</button>`;
+        const s = T.spells[c.id], merge = c.from ? `<span class="merge">${c.from} + ${c.from} = ${c.to}</span>` : `<span class="merge">${T.newSpell}</span>`;
+        return `<button class="card" data-i="${i}">${tileHtml(c.to)}<span><span class="key">${i + 1}</span> <b>${s.name}</b></span><p>${s.desc}<br />${T.tier[c.id](tierStats(c.id, c.to))}</p>${merge}</button>`;
       }
-      const s = PASSIVES[c.id];
+      const s = T.passives[c.id];
       return `<button class="card" data-i="${i}"><span class="tile passive">${PASSIVE_ICON[c.id]}</span><span><span class="key">${i + 1}</span> <b>${s.name}</b></span><p>${s.desc}</p><span class="merge">Lv ${c.to}</span></button>`;
     })
     .join("");
@@ -84,18 +85,18 @@ export function renderTitle(save, offline) {
   $("best").textContent = fmtTime(save.best);
   $("gold").textContent = save.gold;
   $("offline").hidden = !offline;
-  if (offline) $("offline").textContent = `자리를 비운 사이 대장간이 ${offline} 골드를 벌었어요!`;
+  if (offline) $("offline").textContent = tr().offline(offline);
 }
 
 export function renderShop(save, onBuy) {
-  const free = save.freeBuys > 0;
+  const T = tr(), free = save.freeBuys > 0;
   $("shop-gold").textContent = save.gold;
   $("shop-free").hidden = !free;
-  if (free) $("shop-free").textContent = `보스 처치 보상 · 무료 구매권 ${save.freeBuys}장 (다음 판을 시작하면 사라져요!)`;
-  $("shop-list").innerHTML = Object.entries(UPGRADES)
-    .map(([id, u]) => {
-      const lv = save.upgrades[id], cost = costOf(id, lv);
-      const label = free ? `무료 <s>${cost}</s>` : `● ${cost}`;
+  if (free) $("shop-free").textContent = T.shopFree(save.freeBuys);
+  $("shop-list").innerHTML = Object.keys(UPGRADES)
+    .map((id) => {
+      const u = T.upgrades[id], lv = save.upgrades[id], cost = costOf(id, lv);
+      const label = free ? `${T.free} <s>${cost}</s>` : `● ${cost}`;
       return `<li><div><b>${u.name}</b><span class="lv">Lv ${lv}</span><p>${u.desc}</p></div><button data-id="${id}" ${!free && save.gold < cost ? "disabled" : ""}>${label}</button></li>`;
     })
     .join("");
@@ -109,7 +110,7 @@ export function renderOver(run, gold, isBest) {
   $("r-gold").textContent = `+${gold}`;
   $("new-best").hidden = !isBest;
   $("r-free").hidden = !run.bossKills;
-  if (run.bossKills) $("r-free").textContent = `보스 ${run.bossKills}마리 처치! 대장간 무료 구매권 ${run.bossKills}장 · 다음 판 전에 쓰세요`;
+  if (run.bossKills) $("r-free").textContent = tr().overFree(run.bossKills);
 }
 
 export const el = $;

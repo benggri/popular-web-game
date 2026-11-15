@@ -33,7 +33,7 @@ export function updateSpawns(run, dt, view) {
   if (run.t >= run.nextBoss) {
     run.nextBoss += BOSS_EVERY;
     spawnEnemy(run, "skull", view);
-    run.alert = { text: "보스 해골 출현!", t: 2.5 };
+    run.alert = { key: "bossAppears", t: 2.5 };
     // a ring of slimes rides in with it
     for (let i = 0; i < 16; i++) if (run.enemies.length < MAX_ENEMIES) spawnEnemy(run, "slime", view);
   }

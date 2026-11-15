@@ -3,12 +3,13 @@
 const KEY = "ember-tail-save-v1";
 const OFFLINE_CAP_MIN = 8 * 60;
 
+/** Base prices; names and descriptions live in src/i18n. */
 export const UPGRADES = {
-  might: { name: "위력", desc: "주문 피해 +10%", base: 30 },
-  vitality: { name: "활력", desc: "최대 체력 +15", base: 25 },
-  haste: { name: "신속", desc: "이동 속도 +5%", base: 40 },
-  greed: { name: "탐욕", desc: "판마다 얻는 골드 +15%", base: 50 },
-  forge: { name: "불씨 대장간", desc: "접속하지 않는 동안 분당 골드 +2", base: 120 },
+  might: { base: 30 },
+  vitality: { base: 25 },
+  haste: { base: 40 },
+  greed: { base: 50 },
+  forge: { base: 120 },
 };
 
 export function defaultSave(now = Date.now()) {
