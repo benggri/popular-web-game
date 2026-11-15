@@ -37,6 +37,8 @@ export function updateHud(run) {
   $("timer").textContent = fmtTime(run.t);
   $("kills").textContent = run.kills;
   $("coins").textContent = run.coins;
+  $("alert").hidden = !run.alert;
+  if (run.alert) $("alert").textContent = run.alert.text;
   $("dash").style.setProperty("--ready", String(1 - p.dashCd / PLAYER.dashCooldown));
   const sig = JSON.stringify(run.loadout.spells);
   if (sig !== lastTiles) renderTiles(run, lastTiles ? JSON.parse(lastTiles) : {});

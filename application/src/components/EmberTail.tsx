@@ -32,6 +32,7 @@ export default function EmberTail() {
           </div>
         </div>
         <div id="tiles" className="tiles" />
+        <p id="alert" className="alert" role="status" hidden />
         <button id="dash" className="dash" aria-label="대시">
           <span>대시</span>
         </button>

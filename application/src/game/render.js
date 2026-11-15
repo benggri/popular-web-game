@@ -134,6 +134,53 @@ function drawOrbs(ctx, run, S, camX, camY, now) {
   for (const o of run.orbs) blit(ctx, S.orb, frameAt(S.orb, now), o.x - camX, o.y - camY + 14, false, 0.6);
 }
 
+/** A red arrow on the view's edge pointing at each boss that's off screen. */
+function drawBossPointers(ctx, run, camX, camY, view, now) {
+  const cx = view.w / 2, cy = view.h / 2, pad = 14;
+  for (const e of run.enemies) {
+    if (!ENEMIES[e.kind].boss) continue;
+    const x = e.x - camX, y = e.y - camY;
+    if (x > -e.radius && x < view.w + e.radius && y > -e.radius && y < view.h + e.radius) continue;
+    const a = Math.atan2(y - cy, x - cx), k = Math.min((cx - pad) / Math.abs(Math.cos(a) || 1e-6), (cy - pad) / Math.abs(Math.sin(a) || 1e-6));
+    const px = cx + Math.cos(a) * k, py = cy + Math.sin(a) * k;
+    ctx.save();
+    ctx.translate(Math.round(px), Math.round(py));
+    ctx.rotate(a);
+    ctx.globalAlpha = 0.6 + 0.4 * Math.abs(Math.sin(now * 6));
+    ctx.fillStyle = "#120c18";
+    ctx.beginPath();
+    ctx.moveTo(9, 0);
+    ctx.lineTo(-6, -7);
+    ctx.lineTo(-6, 7);
+    ctx.fill();
+    ctx.fillStyle = "#ff4d6d";
+    ctx.beginPath();
+    ctx.moveTo(7, 0);
+    ctx.lineTo(-4, -5);
+    ctx.lineTo(-4, 5);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+/** A pulsing red rim when the ember is low on health. */
+function drawDanger(ctx, run, view, now) {
+  const p = run.player, k = p.hp / p.maxHp;
+  if (run.over || k >= 0.3) return;
+  const pulse = 0.5 + 0.5 * Math.sin(now * (6 + (0.3 - k) * 20));
+  const r = Math.hypot(view.w, view.h) / 2, g = ctx.createRadialGradient(view.w / 2, view.h / 2, r * 0.55, view.w / 2, view.h / 2, r);
+  g.addColorStop(0, "rgba(255,40,60,0)");
+  g.addColorStop(1, `rgba(255,40,60,${(0.25 + 0.25 * pulse).toFixed(3)})`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, view.w, view.h);
+}
+
+/** Screen-space warnings drawn over everything, effects included. */
+export function drawOverlay(ctx, run, cam, view, now) {
+  drawBossPointers(ctx, run, cam.x, cam.y, view, now);
+  drawDanger(ctx, run, view, now);
+}
+
 /** The whole scene, minus the live effects layer that goes on top. */
 export function drawWorld(ctx, run, S, floor, cam, view, now) {
   const { x: camX, y: camY } = cam;

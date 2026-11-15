@@ -35,6 +35,7 @@ export function createRun(save) {
     spawnAcc: 0,
     nextBoss: BOSS_EVERY,
     shake: 0,
+    alert: null,
     grid: new Map(),
   };
 }
@@ -242,10 +243,12 @@ function collect(run, it, fx) {
   }
 }
 
-function mergeFarGems(run) {
+export function mergeFarGems(run) {
   const p = run.player, gems = run.pickups.filter((it) => it.kind === "gem" && !it.pulled);
   gems.sort((a, b) => (b.x - p.x) ** 2 + (b.y - p.y) ** 2 - ((a.x - p.x) ** 2 + (a.y - p.y) ** 2));
   const far = gems.slice(0, 100), total = far.reduce((s, g) => s + g.value, 0);
+  // the floor can fill with coins and pulled gems too; with nothing to merge, leave it be
+  if (far.length < 2) return;
   run.pickups = run.pickups.filter((it) => !far.includes(it));
   run.pickups.push({ kind: "gem", x: far[0].x, y: far[0].y, value: total, t: 0 });
 }

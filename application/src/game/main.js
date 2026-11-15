@@ -7,9 +7,9 @@ import { createInput } from "./input.js";
 import { createRun, rebuildGrid, updatePlayer, updatePickups, onPassive } from "./world.js";
 import { updateSpawns, updateEnemies } from "./enemies.js";
 import { updateSpells } from "./spells.js";
-import { drawWorld, makeFloor } from "./render.js";
+import { drawWorld, drawOverlay, makeFloor } from "./render.js";
 import { offerCards, applyCard } from "./runes.js";
-import { loadSave, storeSave, buy, offlineGold, runGold } from "./progress.js";
+import { loadSave, storeSave, buy, settleOffline, runGold } from "./progress.js";
 import * as ui from "./ui.js";
 
 const canvas = ui.el("game");
@@ -56,9 +56,15 @@ function startRun() {
   fx.clear();
   ui.resetHud();
   ui.setHud(true);
-  ui.show();
   overDelay = 1.3;
+  resumePlay();
+}
+
+/** Back to the action. A dash pressed on a menu (Space on the title, a right click on a card) is dropped. */
+function resumePlay() {
+  input.takeDash();
   mode = "play";
+  ui.show();
 }
 
 function openShop(from) {
@@ -97,20 +103,14 @@ function pickCard(card) {
   run.pendingLevels--;
   cards = null;
   if (run.pendingLevels > 0) openLevelUp();
-  else {
-    mode = "play";
-    ui.show();
-  }
+  else resumePlay();
 }
 
 function setPaused(on) {
   if (on && mode === "play") {
     mode = "paused";
     ui.show("paused");
-  } else if (!on && mode === "paused") {
-    mode = "play";
-    ui.show();
-  }
+  } else if (!on && mode === "paused") resumePlay();
 }
 
 function endRun() {
@@ -148,6 +148,7 @@ function step(dt) {
   rebuildGrid(run);
   updateSpells(run, dt, fx);
   updatePickups(run, dt, fx);
+  if (run.alert && (run.alert.t -= dt) <= 0) run.alert = null;
   if (run.pendingLevels > 0 && !run.over) openLevelUp();
 }
 
@@ -180,6 +181,7 @@ function render() {
   cam.y += sh;
   drawWorld(ctx, run, S, floor, cam, view, clock);
   fx.drawTo(ctx, cam.x, cam.y);
+  drawOverlay(ctx, run, cam, view, clock);
 }
 
 /** Behind the title: the ember idling on the flagstones. */
@@ -223,8 +225,10 @@ function wire() {
       setPaused(true);
       save = { ...save, lastSeen: Date.now() };
       storeSave(storage, save);
-    }
+    } else if (S) payOffline();
   });
+  // clicking another window leaves the keys stuck and the swarm unattended
+  window.addEventListener("blur", () => setPaused(true));
   window.addEventListener("resize", resize);
 }
 
@@ -242,9 +246,14 @@ export async function startGame() {
   await new Promise((r) => setTimeout(r, 30));
   S = bakeAll();
   floor = makeFloor();
-  const earned = offlineGold(save, Date.now());
-  save = { ...save, gold: save.gold + earned, lastSeen: Date.now() };
-  storeSave(storage, save);
   toTitle();
-  ui.renderTitle(save, earned);
+  payOffline();
+}
+
+/** Credits the forge for the time away (since boot or since the tab was hidden). */
+function payOffline() {
+  const settled = settleOffline(save, Date.now());
+  save = settled.save;
+  storeSave(storage, save);
+  if (mode === "title" && settled.earned) ui.renderTitle(save, settled.earned);
 }

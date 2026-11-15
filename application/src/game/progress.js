@@ -31,6 +31,12 @@ export function offlineGold(save, now) {
   return Math.floor(minutes * save.upgrades.forge * 2);
 }
 
+/** Pays out the forge's offline gold and restarts the clock. Returns the new save and what was earned. */
+export function settleOffline(save, now) {
+  const earned = offlineGold(save, now);
+  return { save: { ...save, gold: save.gold + earned, lastSeen: now }, earned };
+}
+
 /** Gold a finished run pays out, before it's added to the save. */
 export function runGold(coins, upgrades) {
   return Math.floor(coins * (1 + 0.15 * upgrades.greed));

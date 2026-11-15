@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createLoadout, offerCards, applyCard, power, MAX_TIER } from "../src/game/runes.js";
-import { defaultSave, buy, costOf, offlineGold, runGold, loadSave, storeSave } from "../src/game/progress.js";
+import { defaultSave, buy, costOf, offlineGold, settleOffline, runGold, loadSave, storeSave } from "../src/game/progress.js";
+import { createRun, mergeFarGems } from "../src/game/world.js";
 
 const seq = (...xs) => {
   let i = 0;
@@ -62,6 +63,16 @@ describe("progress", () => {
     expect(offlineGold({ ...s, upgrades: { ...s.upgrades, forge: 0 } }, 60000)).toBe(0);
   });
 
+  it("settling pays the forge once and restarts the clock", () => {
+    const s = defaultSave(0);
+    s.upgrades.forge = 1;
+    const first = settleOffline(s, 5 * 60000);
+    expect(first.earned).toBe(10);
+    expect(first.save.gold).toBe(10);
+    expect(first.save.lastSeen).toBe(5 * 60000);
+    expect(settleOffline(first.save, 5 * 60000).earned).toBe(0);
+  });
+
   it("greed boosts run gold", () => {
     expect(runGold(100, { greed: 2 })).toBe(130);
   });
@@ -75,5 +86,24 @@ describe("progress", () => {
     mem.set("ember-tail-save-v1", "{nope");
     expect(loadSave(storage, 9).gold).toBe(0);
     expect(loadSave({ getItem: () => { throw new Error("blocked"); } }).gold).toBe(0);
+  });
+});
+
+describe("world", () => {
+  const gem = (x, value = 1) => ({ kind: "gem", x, y: 0, value, t: 0 });
+
+  it("merges the farthest gems into one, keeping their xp", () => {
+    const run = createRun(defaultSave(0));
+    run.pickups = Array.from({ length: 150 }, (_, i) => gem(i + 1));
+    mergeFarGems(run);
+    expect(run.pickups).toHaveLength(51);
+    expect(run.pickups.reduce((s, g) => s + g.value, 0)).toBe(150);
+  });
+
+  it("leaves a floor with nothing to merge alone", () => {
+    const run = createRun(defaultSave(0));
+    run.pickups = Array.from({ length: 401 }, () => ({ kind: "coin", x: 50, y: 0, value: 1, t: 0 }));
+    expect(() => mergeFarGems(run)).not.toThrow();
+    expect(run.pickups).toHaveLength(401);
   });
 });
