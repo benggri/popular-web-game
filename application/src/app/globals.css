@@ -266,25 +266,57 @@ body {
 .langs {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 4px 10px;
-  font-size: 11px;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.langs-icon {
+  font-size: 16px;
+  margin-right: 2px;
 }
 
 .langs a {
+  flex: 0 1 76px;
+  padding: 6px 4px;
+  white-space: nowrap;
+  border: 2px solid var(--line);
+  background: var(--ink);
   color: var(--muted);
   text-decoration: none;
-  padding: 2px 4px;
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+/* phones: the four buttons share the row and the globe makes room */
+@media (max-width: 420px) {
+  .langs {
+    flex-wrap: nowrap;
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .langs-icon {
+    display: none;
+  }
+
+  .langs a {
+    flex: 1 1 0;
+  }
 }
 
 .langs a:hover,
 .langs a:focus-visible {
+  border-color: var(--ember);
   color: var(--text);
+  outline: none;
 }
 
 .langs a[aria-current="page"] {
-  color: var(--ember-hi);
-  border-bottom: 2px solid var(--ember-hi);
+  border-color: var(--ember-hi);
+  background: var(--ember);
+  color: var(--ink);
+  font-weight: bold;
 }
 
 h1,

@@ -3,7 +3,7 @@
 // The game's static markup. The canvas game (src/game) takes over these elements by id once mounted.
 
 import { useEffect } from "react";
-import { LANGS, dict, pathOf } from "@/i18n/index.js";
+import { LANGS, dict, pathOf, rememberLang } from "@/i18n/index.js";
 
 export default function EmberTail({ lang }: { lang: string }) {
   useEffect(() => {
@@ -47,9 +47,19 @@ export default function EmberTail({ lang }: { lang: string }) {
       <section id="title" className="screen">
         <div className="panel title-panel">
           <nav className="langs" aria-label="Language">
+            <span className="langs-icon" aria-hidden="true">
+              🌐
+            </span>
             {LANGS.map((code) => (
               // a full page load: the game boots once per page, in that page's language
-              <a key={code} href={pathOf(code)} hrefLang={dict(code).htmlLang} aria-current={code === lang ? "page" : undefined}>
+              <a
+                key={code}
+                href={pathOf(code)}
+                hrefLang={dict(code).htmlLang}
+                lang={dict(code).htmlLang}
+                aria-current={code === lang ? "page" : undefined}
+                onClick={() => rememberLang(code)}
+              >
                 {dict(code).label}
               </a>
             ))}

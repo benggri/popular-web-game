@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_URL, SITE_NAME, langOf, languageAlternates } from "@/lib/site";
-import { LANGS, DEFAULT_LANG, dict, pathOf } from "@/i18n/index.js";
+import { LANGS, DEFAULT_LANG, dict, pathOf, returnToPickedLang } from "@/i18n/index.js";
 import "../globals.css";
 
 // Galmuri11 by Lee Minseo, SIL Open Font License 1.1 (see fonts/OFL.md)
@@ -73,6 +74,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[[.
   return (
     <html lang={dict(lang).htmlLang} className={galmuri.variable}>
       <head>
+        {lang === DEFAULT_LANG && <script dangerouslySetInnerHTML={{ __html: returnToPickedLang }} />}
         {/* Google AdSense: a plain tag, since next/script's data-nscript attribute trips AdSense's head check */}
         <script
           async
@@ -82,6 +84,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[[.
       </head>
       <body>
         {children}
+        <Analytics />
         <SpeedInsights />
       </body>
     </html>

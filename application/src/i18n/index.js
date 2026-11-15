@@ -16,6 +16,26 @@ export const dict = (lang) => DICTS[isLang(lang) ? lang : DEFAULT_LANG];
 /** The page path for a language: "/" for Korean, "/en" for English ... */
 export const pathOf = (lang) => (lang === DEFAULT_LANG ? "/" : `/${lang}`);
 
+/** localStorage key for the language a player picked on the title screen. */
+export const LANG_KEY = "ember-tail-lang";
+
+/** Remembers the player's pick, so a later visit to / goes straight back to it. */
+export function rememberLang(lang) {
+  try {
+    window.localStorage.setItem(LANG_KEY, lang);
+  } catch {
+    // blocked storage: the pick just isn't remembered
+  }
+}
+
+/**
+ * Inline script for the Korean root page: sends a player who picked another language back to it
+ * before anything paints. Crawlers have no saved pick, so they always see the Korean page.
+ */
+export const returnToPickedLang = `try{var l=localStorage.getItem(${JSON.stringify(LANG_KEY)});if(${JSON.stringify(
+  LANGS.filter((l) => l !== DEFAULT_LANG),
+)}.indexOf(l)>=0)location.replace("/"+l)}catch(e){}`;
+
 // the game's strings follow the page it booted on
 let current = dict(DEFAULT_LANG);
 
