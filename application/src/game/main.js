@@ -25,7 +25,7 @@ const storage = (() => {
   }
 })();
 
-let S = null, floor = null, run = null, save = loadSave(storage), mode = "loading", shopReturn = "title";
+let S = null, floor = null, run = null, save = loadSave(storage), mode = "title", shopReturn = "title";
 let cards = null, overDelay = 0, last = performance.now(), clock = 0, idle = null;
 
 function resize() {
@@ -50,6 +50,8 @@ function toTitle() {
 }
 
 function startRun() {
+  // the title is server-rendered and clickable before the sprites are baked
+  if (!S) return;
   run = createRun(save);
   fx.clear();
   ui.resetHud();
@@ -235,7 +237,8 @@ export async function startGame() {
   resize();
   wire();
   requestAnimationFrame(tick);
-  // let the loading screen paint before the bake blocks the thread
+  ui.renderTitle(save, 0);
+  // let the title paint before the bake blocks the thread
   await new Promise((r) => setTimeout(r, 30));
   S = bakeAll();
   floor = makeFloor();

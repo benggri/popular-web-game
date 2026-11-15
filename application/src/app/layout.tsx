@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_KEYWORDS } from "@/lib/site";
 import "./globals.css";
 
 // Galmuri11 by Lee Minseo, SIL Open Font License 1.1 (see fonts/OFL.md)
@@ -13,13 +14,30 @@ const galmuri = localFont({
   display: "swap",
 });
 
+// Search Console / Search Advisor ownership codes, set as Vercel env vars; left out of the page when unset
+const verificationOther: Record<string, string> = {};
+if (process.env.NAVER_SITE_VERIFICATION) verificationOther["naver-site-verification"] = process.env.NAVER_SITE_VERIFICATION;
+
 export const metadata: Metadata = {
-  title: "Ember Tail — 픽셀 서바이버",
-  description:
-    "포인터를 따라 움직이는 유령불이 되어 몰려오는 괴물을 태우세요. 같은 주문을 고르면 2048처럼 합쳐져 강해집니다.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  applicationName: SITE_NAME,
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   openGraph: {
-    title: "Ember Tail — 픽셀 서바이버",
-    description: "Slither 조작 + 서바이버 + 2048 합성 + 방치형 성장. 브라우저에서 바로.",
+    type: "website",
+    locale: "ko_KR",
+    url: "/",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: { card: "summary_large_image", title: SITE_TITLE, description: SITE_DESCRIPTION },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: verificationOther,
   },
 };
 

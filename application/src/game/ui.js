@@ -6,7 +6,7 @@ import { UPGRADES, costOf } from "./progress.js";
 import { describeTier } from "./spells.js";
 
 const $ = (id) => document.getElementById(id);
-const SCREENS = ["loading", "title", "shop", "levelup", "paused", "over"];
+const SCREENS = ["title", "shop", "levelup", "paused", "over"];
 const PASSIVE_ICON = { tail: "≈", swift: "»", magnet: "⊙", heart: "♥" };
 
 export const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;

@@ -40,18 +40,14 @@ export default function EmberTail() {
         </button>
       </div>
 
-      <section id="loading" className="screen">
-        <p className="blink">불씨를 지피는 중…</p>
-      </section>
-
-      <section id="title" className="screen" hidden>
+      <section id="title" className="screen">
         <div className="panel title-panel">
-          <h1 className="logo">
+          <h1 className="logo" aria-label="Ember Tail 엠버 테일">
             EMBER
             <br />
             TAIL
           </h1>
-          <p className="tagline">유령불이 되어 밤을 버티세요</p>
+          <p className="tagline">유령불이 되어 밤을 버티는 픽셀 서바이버</p>
           <div className="stats-row">
             <span>
               최고 <b id="best">0:00</b>
@@ -81,6 +77,11 @@ export default function EmberTail() {
               <b>꼬리</b> 꼬리에 닿은 적은 불탑니다
             </li>
           </ul>
+          <p className="about">
+            설치 없이 브라우저에서 바로 하는 무료 픽셀 아트 서바이버 게임입니다. 자동으로 발사되는 주문으로 슬라임·박쥐·유령·보스
+            해골을 물리치고, 같은 주문을 합쳐 2048처럼 강화하세요. 모은 골드로 영구 강화를 하면 다음 판은 더 오래 버틸 수
+            있어요. PC와 모바일 모두 지원합니다.
+          </p>
         </div>
       </section>
 
