@@ -240,17 +240,6 @@ body {
   overflow-y: auto;
 }
 
-/* 패널 아래에 광고가 붙는 화면: 둘을 한 덩어리로 가운데 정렬 (넘치면 위부터 스크롤) */
-.screen.has-ad {
-  align-content: safe center;
-  gap: 14px;
-}
-
-.ad-slot {
-  width: min(420px, 100%);
-  min-height: 100px;
-}
-
 .screen.dim {
   background: rgba(8, 6, 12, 0.72);
 }

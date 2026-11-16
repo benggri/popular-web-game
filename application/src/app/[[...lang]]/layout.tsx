@@ -77,12 +77,6 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[[.
     <html lang={dict(lang).htmlLang} className={galmuri.variable}>
       <head>
         {lang === DEFAULT_LANG && <script dangerouslySetInnerHTML={{ __html: returnToPickedLang }} />}
-        {/* Google AdSense: a plain tag, since next/script's data-nscript attribute trips AdSense's head check */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9245086971599023"
-          crossOrigin="anonymous"
-        />
       </head>
       <body>
         {children}
