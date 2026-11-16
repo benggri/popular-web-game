@@ -17,9 +17,11 @@ const galmuri = localFont({
   display: "swap",
 });
 
-// Search Console / Search Advisor ownership codes, set as Vercel env vars; left out of the page when unset
-const verificationOther: Record<string, string> = {};
-if (process.env.NAVER_SITE_VERIFICATION) verificationOther["naver-site-verification"] = process.env.NAVER_SITE_VERIFICATION;
+// Search Console / Search Advisor ownership codes for application-three-zeta.vercel.app.
+// They are public in the page anyway; a Vercel env var of the same name overrides them.
+const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION || "fQnTUYsAUbzHUCe5mnsMwIXGZmuvS3Oh0WcimPE66Hw";
+const NAVER_SITE_VERIFICATION = process.env.NAVER_SITE_VERIFICATION || "a6ad3fc2da6ad4c919ff4f9a246bcdc08c6022a3";
+const verificationOther: Record<string, string> = { "naver-site-verification": NAVER_SITE_VERIFICATION };
 
 // one static page per language: / (Korean), /en, /ja, /zh; any other path is a 404
 export const dynamicParams = false;
@@ -53,7 +55,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[[...lang]]">):
     },
     twitter: { card: "summary_large_image", title: d.site.title, description: d.site.description, images: [image] },
     verification: {
-      google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+      google: GOOGLE_SITE_VERIFICATION,
       other: verificationOther,
     },
   };
