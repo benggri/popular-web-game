@@ -2,7 +2,7 @@
 
 import { LANGS, DEFAULT_LANG, dict, pathOf } from "@/i18n/index.js";
 
-export const SITE_URL = "https://popular-web-game.vercel.app";
+export const SITE_URL = "https://application-three-zeta.vercel.app";
 export const SITE_NAME = "Ember Tail";
 
 /** The language a route's optional `[[...lang]]` segment names: none is Korean, anything else unknown is null. */
