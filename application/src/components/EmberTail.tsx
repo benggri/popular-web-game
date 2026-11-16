@@ -4,6 +4,8 @@
 
 import { useEffect } from "react";
 import { LANGS, dict, pathOf, rememberLang } from "@/i18n/index.js";
+import { AD_SLOT_SCREENS } from "@/lib/ads";
+import AdUnit from "./AdUnit";
 
 export default function EmberTail({ lang }: { lang: string }) {
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function EmberTail({ lang }: { lang: string }) {
         </button>
       </div>
 
-      <section id="title" className="screen">
+      <section id="title" className={AD_SLOT_SCREENS ? "screen has-ad" : "screen"}>
         <div className="panel title-panel">
           <nav className="langs" aria-label="Language">
             <span className="langs-icon" aria-hidden="true">
@@ -94,6 +96,7 @@ export default function EmberTail({ lang }: { lang: string }) {
           </ul>
           <p className="about">{t.about}</p>
         </div>
+        <AdUnit slot={AD_SLOT_SCREENS} />
       </section>
 
       <section id="shop" className="screen" hidden>
@@ -131,7 +134,7 @@ export default function EmberTail({ lang }: { lang: string }) {
         </div>
       </section>
 
-      <section id="over" className="screen dim" hidden>
+      <section id="over" className={AD_SLOT_SCREENS ? "screen dim has-ad" : "screen dim"} hidden>
         <div className="panel">
           <h2>{t.over}</h2>
           <p id="new-best" className="toast" hidden>
@@ -160,6 +163,7 @@ export default function EmberTail({ lang }: { lang: string }) {
             {t.toTitle}
           </button>
         </div>
+        <AdUnit slot={AD_SLOT_SCREENS} />
       </section>
     </main>
   );
